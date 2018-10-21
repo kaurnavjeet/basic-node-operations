@@ -18,6 +18,13 @@ function evaluateCmd(userInput) {
       break;
     case "head":
       commandLibrary.head(userInputArray.slice(1));
+      break;
+    case "tail":
+      commandLibrary.tail(userInputArray.slice(1));
+      break;
+    default:
+      commandLibrary.errorHandler(userInputArray.slice(0, 1).join(" "));
+      break;
   }
 }
 
@@ -36,8 +43,20 @@ const commandLibrary = {
     const fileName = fullPath[0];
     fs.readFile(fileName, (err, data) => {
       if (err) throw err;
-      done(data);
+      let lines = data.toString().split("\n");
+      done(lines.slice(0, 10).join("\n"));
     });
+  },
+  tail: function(fullPath) {
+    const fileName = fullPath[0];
+    fs.readFile(fileName, (err, data) => {
+      if (err) throw err;
+      let lines = data.toString().split("\n");
+      done(lines.slice(lines.length - 10).join("\n"));
+    });
+  },
+  errorHandler: function(userInput) {
+    done("bash: " + userInput + ": command not found");
   }
 };
 
